@@ -3,7 +3,7 @@
 <package format="3">
   <name>custom_interfaces</name>
   <version>0.0.0</version>
-  <description>TODO: Package description</description>
+  <description>自定义 ROS2 接口包，包含消息、服务和动作定义</description>
   <maintainer email="mingtaoh40@gmail.com">hmt</maintainer>
   <license>Apache-2.0</license>
 
