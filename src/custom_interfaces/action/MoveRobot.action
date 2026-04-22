@@ -1,11 +1,11 @@
 # Goal
-Position target_position
-float32 speed
+Position target_position  # Target position (units: meters)
+float32 speed           # Movement speed (units: m/s)
 ---
 # Result
-bool success
-string message
+bool success   # Whether the action succeeded
+string message  # Status message
 ---
 # Feedback
-float32 progress
-string status_message
+float32 progress      # Progress (0.0 to 1.0)
+string status_message  # Current status

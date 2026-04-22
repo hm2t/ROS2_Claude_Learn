@@ -36,6 +36,10 @@ class ServiceClientNode(Node):
                 f'收到响应: name={response.status.name}, '
                 f'battery={response.status.battery_level}, '
                 f'position=({response.position.x}, {response.position.y}, {response.position.z})')
+        except rclpy.client.ClientException as e:
+            self.get_logger().error(f'服务调用失败 (ClientException): {e}')
+        except TimeoutError as e:
+            self.get_logger().error(f'服务调用超时: {e}')
         except Exception as e:
             self.get_logger().error(f'服务调用失败: {e}')
 
@@ -46,7 +50,7 @@ def main(args=None):
     try:
         rclpy.spin(node)
     except KeyboardInterrupt:
-        pass
+        node.get_logger().info('节点被 KeyboardInterrupt 终止')
     finally:
         node.destroy_node()
         rclpy.shutdown()

@@ -34,9 +34,13 @@ class ActionClientNode(Node):
         self._send_goal_future.add_done_callback(self.goal_response_callback)
 
     def goal_response_callback(self, future):
-        goal_handle = future.result()
-        if not goal_handle.accepted:
-            self.get_logger().error('目标被拒绝')
+        try:
+            goal_handle = future.result()
+            if not goal_handle.accepted:
+                self.get_logger().error('目标被拒绝')
+                return
+        except Exception as e:
+            self.get_logger().error(f'目标响应失败: {e}')
             return
 
         self.get_logger().info('目标被接受，等待结果...')
@@ -49,9 +53,13 @@ class ActionClientNode(Node):
             f'status={feedback.feedback.status_message}')
 
     def result_callback(self, future):
-        result = future.result().result
-        self.get_logger().info(f'收到结果: success={result.success}, message={result.message}')
-        rclpy.shutdown()
+        try:
+            result = future.result().result
+            self.get_logger().info(f'收到结果: success={result.success}, message={result.message}')
+        except Exception as e:
+            self.get_logger().error(f'获取结果失败: {e}')
+        finally:
+            rclpy.shutdown()
 
 
 def main(args=None):
@@ -60,7 +68,7 @@ def main(args=None):
     try:
         rclpy.spin(node)
     except KeyboardInterrupt:
-        pass
+        node.get_logger().info('节点被 KeyboardInterrupt 终止')
     finally:
         node.destroy_node()
         rclpy.shutdown()
