@@ -32,6 +32,9 @@ class ServiceClientNode(Node):
     def response_callback(self, future):
         try:
             response = future.result()
+            if response is None:
+                self.get_logger().error('服务调用失败: 未收到响应')
+                return
             self.get_logger().info(
                 f'收到响应: name={response.status.name}, '
                 f'battery={response.status.battery_level}, '

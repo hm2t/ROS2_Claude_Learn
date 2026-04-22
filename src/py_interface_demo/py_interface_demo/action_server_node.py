@@ -27,27 +27,31 @@ class ActionServerNode(Node):
 
         thread = threading.Thread(target=self._execute_work, args=(goal_handle,))
         thread.start()
-        return
 
     def _execute_work(self, goal_handle):
         result = MoveRobot.Result()
         feedback = MoveRobot.Feedback()
 
-        for i in range(10):
-            if goal_handle.is_cancel_requested:
-                self.get_logger().info('目标被取消')
-                return
-            feedback.progress = (i + 1) / 10.0
-            feedback.status_message = f'移动进度: {(i+1)*10}%'
-            goal_handle.publish_feedback(feedback)
-            self.get_logger().info(f'反馈进度: {feedback.progress*100:.0f}%')
-            time.sleep(0.5)
+        try:
+            for i in range(10):
+                if goal_handle.is_cancel_requested:
+                    self.get_logger().info('目标被取消')
+                    return
+                feedback.progress = (i + 1) / 10.0
+                feedback.status_message = f'移动进度: {(i+1)*10}%'
+                goal_handle.publish_feedback(feedback)
+                self.get_logger().info(f'反馈进度: {feedback.progress*100:.0f}%')
+                time.sleep(0.5)
 
-        goal_handle.succeed()
-        result.success = True
-        result.message = '移动完成'
-
-        self.get_logger().info('目标执行完成')
+            goal_handle.succeed()
+            result.success = True
+            result.message = '移动完成'
+            self.get_logger().info('目标执行完成')
+        except Exception as e:
+            self.get_logger().error(f'目标执行失败: {e}')
+            goal_handle.abort()
+            result.success = False
+            result.message = f'执行异常: {e}'
         return result
 
 

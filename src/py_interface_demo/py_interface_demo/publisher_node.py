@@ -21,20 +21,26 @@ class PublisherNode(Node):
         self.get_logger().info('发布者节点已启动')
 
     def publish_status(self):
-        msg = RobotStatus()
-        msg.name = 'robot_001'
-        msg.is_active = True
-        msg.battery_level = 0.85
-        self.robot_status_pub.publish(msg)
-        self.get_logger().info(f'发布 RobotStatus: name={msg.name}, battery={msg.battery_level}')
+        try:
+            msg = RobotStatus()
+            msg.name = 'robot_001'
+            msg.is_active = True
+            msg.battery_level = 0.85
+            self.robot_status_pub.publish(msg)
+            self.get_logger().info(f'发布 RobotStatus: name={msg.name}, battery={msg.battery_level}')
+        except Exception as e:
+            self.get_logger().error(f'发布 RobotStatus 失败: {e}')
 
     def publish_position(self):
-        msg = Position()
-        msg.x = 1.0
-        msg.y = 2.0
-        msg.z = 0.0
-        self.position_pub.publish(msg)
-        self.get_logger().info(f'发布 Position: x={msg.x}, y={msg.y}, z={msg.z}')
+        try:
+            msg = Position()
+            msg.x = 1.0
+            msg.y = 2.0
+            msg.z = 0.0
+            self.position_pub.publish(msg)
+            self.get_logger().info(f'发布 Position: x={msg.x}, y={msg.y}, z={msg.z}')
+        except Exception as e:
+            self.get_logger().error(f'发布 Position 失败: {e}')
 
 
 def main(args=None):
